@@ -71,6 +71,7 @@ void loop() {
         }
 
         send_LoRa_data(set_port, payload);
+        read_data_from_LoRa_Mod();
     }
     delay(100);
 
