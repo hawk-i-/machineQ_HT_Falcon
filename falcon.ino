@@ -16,6 +16,7 @@ long    defaultBaudRate = 57600;
 int     reset_port = 5;
 int     RN2483_power_port = 6;
 int     led_port = 13;
+const int th_hold = 350;
 
 //*** Set parameters here BEGIN ---->
 // NOTE: Devices joining the network via ABP, what we're doing for the hackathon,
@@ -44,51 +45,34 @@ void setup() {
 }
 
 void loop() {
-  //int buttonState = digitalRead(A3);
-  //int button2State = digitalRead(A2);
-
-  //if (buttonState == 1 || button2State == 1) {
     int analog2 = analogRead(analogInPin2);
     int analog3 = analogRead(analogInPin3);
 
-    Serial.println(analog2);
+    Serial.println(analog2); 
 
-    
-    char payload[MAX_SIZE] = "";
+    if (analog2 > th_hold)
+    {
+        Serial.println("Gunshot Detected nearby");
+        char payload[MAX_SIZE] = "";
 
-    lpp.reset();
+        lpp.reset();
 
-    // Stub out payloads if you want.
-    lpp.addAnalogInput(1, analog2);
-    lpp.addAnalogInput(2, analog3);
-    
-    // lpp.addDigitalInput(1, 1);
-    // lpp.addTemperature(12, 22.5);
-    // lpp.addBarometricPressure(2, 1073.21);
-    // lpp.addGPS(3, 52.37365, 4.88650, 2);
+        // Stub out payloads if you want.
+        lpp.addAnalogInput(1, analog2);
+        lpp.addAnalogInput(2, analog3);
 
-    uint8_t buff = *lpp.getBuffer();
+        uint8_t buff = *lpp.getBuffer();
 
-//    Serial.print("Buffer size:" );
-//    Serial.println(lpp.getSize());
+        for (int i = 0; i < lpp.getSize(); i++) {
+        char tmp[16];
 
-    for (int i = 0; i < lpp.getSize(); i++) {
-      char tmp[16];
+        sprintf(tmp, "%.2X",(lpp.getBuffer())[i]);
+        strcat(payload, tmp);
+        }
 
-      sprintf(tmp, "%.2X",(lpp.getBuffer())[i]);
-      strcat(payload, tmp);
+        send_LoRa_data(set_port, payload);
     }
-
-//    Serial.print("Buffer content:" );
-//    Serial.println(payload);
-
-    send_LoRa_data(set_port, payload);
-
     delay(50);
-    // Serial.println(count);
-    // count = count + 1;
-
-  //} // end if
 
 } // end loop()
 
@@ -158,10 +142,13 @@ void read_data_from_LoRa_Mod() {
 
 void send_LoRa_Command(String cmd) {
   Serial1.println(cmd);
-  // delay(500);
+  delay(100);
 }
 
 void send_LoRa_data(int tx_port, String rawdata) {
   // send_LoRa_Command("mac tx uncnf " + String(tx_port) + String(" ") + rawdata);
   send_LoRa_Command("mac tx cnf " + String(tx_port) + String(" ") + rawdata);
 }
+
+
+
