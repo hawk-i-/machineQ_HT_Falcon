@@ -48,13 +48,19 @@ void loop() {
   //int button2State = digitalRead(A2);
 
   //if (buttonState == 1 || button2State == 1) {
+    int analog2 = analogRead(analogInPin2);
+    int analog3 = analogRead(analogInPin3);
+
+    Serial.println(analog2);
+
+    
     char payload[MAX_SIZE] = "";
 
     lpp.reset();
 
     // Stub out payloads if you want.
-    lpp.addAnalogInput(1, analogRead(analogInPin2));
-    lpp.addAnalogInput(2, analogRead(analogInPin3));
+    lpp.addAnalogInput(1, analog2);
+    lpp.addAnalogInput(2, analog3);
     
     // lpp.addDigitalInput(1, 1);
     // lpp.addTemperature(12, 22.5);
@@ -63,8 +69,8 @@ void loop() {
 
     uint8_t buff = *lpp.getBuffer();
 
-    Serial.print("Buffer size:" );
-    Serial.println(lpp.getSize());
+//    Serial.print("Buffer size:" );
+//    Serial.println(lpp.getSize());
 
     for (int i = 0; i < lpp.getSize(); i++) {
       char tmp[16];
@@ -73,12 +79,12 @@ void loop() {
       strcat(payload, tmp);
     }
 
-    Serial.print("Buffer content:" );
-    Serial.println(payload);
+//    Serial.print("Buffer content:" );
+//    Serial.println(payload);
 
     send_LoRa_data(set_port, payload);
 
-    delay(1000);
+    delay(50);
     // Serial.println(count);
     // count = count + 1;
 
@@ -151,9 +157,8 @@ void read_data_from_LoRa_Mod() {
 }
 
 void send_LoRa_Command(String cmd) {
-  print_to_console("Now sending: " + cmd);
   Serial1.println(cmd);
-  delay(500);
+  // delay(500);
 }
 
 void send_LoRa_data(int tx_port, String rawdata) {
