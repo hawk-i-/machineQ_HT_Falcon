@@ -72,7 +72,7 @@ void loop() {
 
         send_LoRa_data(set_port, payload);
     }
-    delay(50);
+    delay(100);
 
 } // end loop()
 
@@ -141,14 +141,13 @@ void read_data_from_LoRa_Mod() {
 }
 
 void send_LoRa_Command(String cmd) {
+    print_to_console("Sending: " + cmd);
   Serial1.println(cmd);
-  delay(100);
+  delay(500);
 }
 
 void send_LoRa_data(int tx_port, String rawdata) {
   // send_LoRa_Command("mac tx uncnf " + String(tx_port) + String(" ") + rawdata);
   send_LoRa_Command("mac tx cnf " + String(tx_port) + String(" ") + rawdata);
 }
-
-
 
