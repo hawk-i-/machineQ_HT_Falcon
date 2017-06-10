@@ -39,10 +39,8 @@ void setup() {
   initializeRN2483(RN2483_power_port, reset_port);
   Serial.println("STARTUP..." );
 
-  pinMode(A2, INPUT_PULLUP);
-  digitalWrite(A2, LOW);
-  pinMode(A3, INPUT_PULLUP);
-  digitalWrite(A3, LOW);
+  pinMode(A2, INPUT);
+  pinMode(A3, INPUT);
 }
 
 void loop() {
@@ -56,7 +54,7 @@ void loop() {
 
     // Stub out payloads if you want.
     lpp.addAnalogInput(1, analogRead(analogInPin2));
-    // lpp.addAnalogInput(1, analogRead(analogInPin2));
+    lpp.addAnalogInput(2, analogRead(analogInPin3));
     
     // lpp.addDigitalInput(1, 1);
     // lpp.addTemperature(12, 22.5);
@@ -80,9 +78,9 @@ void loop() {
 
     send_LoRa_data(set_port, payload);
 
-    delay(10000);
-    Serial.println(count);
-    count = count + 1;
+    delay(1000);
+    // Serial.println(count);
+    // count = count + 1;
 
   //} // end if
 
